@@ -1,0 +1,156 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Add New Employee{% endblock %}
+
+{% block content %}
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Employee Data</h6>
+    </div>
+    <div class="card-body">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Row 1: Name and CPF -->
+            <div class="row">
+                <div class="col-md-8 mb-3">
+                    <label for="{{ new_employee_form.name.id_for_label }}" class="form-label">Name</label>
+                    {{ new_employee_form.name }}
+                    {% if new_employee_form.name.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ new_employee_form.name.errors|striptags }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="id_cpf" class="form-label">CPF</label>
+                    <input type="text" name="{{ new_employee_form.cpf.html_name }}" id="id_cpf" class="form-control"
+                        placeholder="000.000.000-00" value="{{ new_employee_form.cpf.value|default:'' }}">
+                    {% if new_employee_form.cpf.errors %}
+                    <div class="invalid-feedback d-block">
+                        {{ new_employee_form.cpf.errors|striptags }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Row 2: Email and Phone -->
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="{{ new_employee_form.email.id_for_label }}" class="form-label">Email</label>
+                    {{ new_employee_form.email }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="{{ new_employee_form.phone.id_for_label }}" class="form-label">Phone</label>
+                    {{ new_employee_form.phone }}
+                </div>
+            </div>
+
+            <!-- Row 3: Birth Date, Age, Status -->
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.birth_date.id_for_label }}" class="form-label">Birth Date</label>
+                    {{ new_employee_form.birth_date }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.age.id_for_label }}" class="form-label">Age</label>
+                    {{ new_employee_form.age }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.status.id_for_label }}" class="form-label">Status</label>
+                    {{ new_employee_form.status }}
+                </div>
+            </div>
+
+            <!-- Row 4: Professional Info (Sector, Level, Hire Date) -->
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.sector.id_for_label }}" class="form-label">Sector</label>
+                    {{ new_employee_form.sector }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.hierarchical_level.id_for_label }}" class="form-label">Hierarchical
+                        Level</label>
+                    {{ new_employee_form.hierarchical_level }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.hire_date.id_for_label }}" class="form-label">Hire Date</label>
+                    {{ new_employee_form.hire_date }}
+                </div>
+            </div>
+
+            <!-- Row 5: Salary, Contract, Photo -->
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.salary.id_for_label }}" class="form-label">Salary</label>
+                    {{ new_employee_form.salary }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.contract_time.id_for_label }}" class="form-label">Contract
+                        Duration</label>
+                    {{ new_employee_form.contract_time }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="{{ new_employee_form.photo.id_for_label }}" class="form-label">Photo</label>
+                    {{ new_employee_form.photo }}
+                </div>
+            </div>
+
+            <hr>
+
+            <div class="d-flex justify-content-end">
+                <a href="{% url 'Employee' %}" class="btn btn-secondary me-2">Cancel</a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg me-1"></i>
+                    Save Employee
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Adds 'form-control' or 'form-select' class to Django form fields
+        const form = document.querySelector('form');
+        form.querySelectorAll('input, select, textarea').forEach(function (el) {
+            if (el.tagName === 'SELECT') {
+                el.classList.add('form-select');
+            } else if (el.type !== 'checkbox' && el.type !== 'radio' && el.type !== 'file') {
+                el.classList.add('form-control');
+            } else if (el.type === 'file') {
+                el.classList.add('form-control');
+            }
+        });
+
+        // CPF Mask
+        const cpfInput = document.getElementById('id_cpf');
+        if (cpfInput) {
+            // Uses form value if it exists (for validation error cases)
+            let initialValue = cpfInput.value.replace(/\D/g, '');
+            if (initialValue) {
+                initialValue = initialValue.replace(/(\d{3})(\d)/, '$1.$2');
+                initialValue = initialValue.replace(/(\d{3})(\d)/, '$1.$2');
+                initialValue = initialValue.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+                cpfInput.value = initialValue;
+            }
+
+            cpfInput.addEventListener('input', function (e) {
+                let value = e.target.value.replace(/\D/g, '');
+
+                if (value.length > 11) {
+                    value = value.slice(0, 11);
+                }
+
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+
+                e.target.value = value;
+            });
+        }
+    });
+</script>
+{% endblock %}
