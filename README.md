@@ -61,7 +61,7 @@ impulso_digital/
 
 Desenvolvido por **João Victor Souza** Entre em contato:
 
-[![LinkedIn](www.linkedin.com/in/joão-victor-azevedo-de-souza-000a9834b)
+[![LinkedIn]([www.linkedin.com/in/joão-victor-azevedo-de-souza-000a9834b](https://www.linkedin.com/in/joão-victor-azevedo-de-souza-000a9834b/))
 
 
 
